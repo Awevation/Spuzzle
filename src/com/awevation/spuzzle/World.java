@@ -13,10 +13,12 @@ public class World {
     }
 
     public void update(float dt) {
+	//account for the difference between time and usable time
+	dt /= 1000.f;
 	player.update(dt);
     }
 
-    public void draw(float[] mvpMatrix) {
-	player.draw(mvpMatrix);
+    public void draw(MatrixStack stack) {
+	player.draw(stack);
     }
 }

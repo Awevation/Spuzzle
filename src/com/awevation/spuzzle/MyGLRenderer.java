@@ -13,6 +13,7 @@ import android.content.Context;
 public class MyGLRenderer implements GLSurfaceView.Renderer {
     public static final String TAG = "MyGLRenderer";
 
+    private MatrixStack matrixStack = new MatrixStack();
     private World world;
     private float[] mVMatrix = new float[16];
     private float[] mMVPMatrix = new float[16];
@@ -21,8 +22,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     private float[] mMVMatrix = new float[16];
     private float[] mRotationMatrix = new float[16];
 
-    private volatile float dt;
-    private volatile float endTime; //for working out the dt
+    private volatile double dt;
+    private volatile double endTime; //for working out the dt
 
 
     public void sendWorld(World targetworld) {
@@ -32,6 +33,9 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     public void onSurfaceCreated(GL10 unused, EGLConfig config) {
         // Set the background frame color
         GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	//GLES20.glDisable(GLES20.GL_DEPTH_TEST);
+	//GLES20.glDepthMask(false);
+
 	world.init();
     }
 
@@ -39,26 +43,31 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 	if(world != null) {
 	    dt = System.currentTimeMillis() - endTime;
 
-	    world.update(dt);
+	    world.update( (float) dt);
 
 	    // Redraw background color
 	    GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
-	    Matrix.setIdentityM(mVMatrix, 0);
-	
-    	    Matrix.setIdentityM(mMMatrix, 0);
-    	    Matrix.translateM(mMMatrix, 0, world.player.xPos, world.player.yPos, -3.f);
-    	    Matrix.multiplyMM(mMVMatrix, 0, mMMatrix, 0, mVMatrix, 0);
+	    //Matrix.setIdentityM(mVMatrix, 0);
 
-    	    Matrix.multiplyMM(mMVPMatrix, 0, mProjMatrix, 0, mMVMatrix, 0);
+	    matrixStack.setProjection(mProjMatrix);
+
+	    matrixStack.loadIdentity();
+
+    	    //Matrix.setIdentityM(mMMatrix, 0);
+    	    //Matrix.translateM(mMMatrix, 0, world.player.xPos, world.player.yPos, -3.f);
+	    //matrixStack.translate(world.player.xPos, world.player.yPos, -3.f);
+	    matrixStack.translate(0.f, 0.f, -3.f);
+    	    //Matrix.multiplyMM(mMVMatrix, 0, mMMatrix, 0, mVMatrix, 0);
+    	    //Matrix.multiplyMM(mMVPMatrix, 0, mProjMatrix, 0, mMVMatrix, 0);
 	
     	    //Matrix.setRotateM(mRotationMatrix, 0, mAngle, 0, 0, 1);
 	    //Matrix.multiplyMM(mMVPMatrix, 0, mRotationMatrix, 0, mMVPMatrix, 0);
-
-    	    world.draw(mMVPMatrix);
+    	    
+	    world.draw(matrixStack);
 
     	    endTime = System.currentTimeMillis();
 	} else {
-	    Log.d("WORLD", "WORLD");
+	    Log.d("Quad", "There is no world....");
 	}
     }
 
@@ -68,7 +77,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 	float ratio = (float) width / height;
 
 	Matrix.frustumM(mProjMatrix, 0, -ratio, ratio, -1, 1, 1, 4);
-	//Matrix.orthoM(mProjMatrix, 0, 0, width, height, 0, -10.f, 10.f);
+
+	//Matrix.orthoM(mProjMatrix, 0, 0, width, 0, height, -1.f, 1.f);
     }
 
     public static int loadShader(int type, String shaderCode){

@@ -86,7 +86,7 @@ public class OpenGLActivity extends MultiTouchActivity {
 
 	buttonLeft.setRunmeDown(new Runnable() {
 	    public void run() {
-		world.player.setXAcc(-0.001f);
+		world.player.setXAcc(-0.5f);
 	    }
 	});
 
@@ -98,7 +98,7 @@ public class OpenGLActivity extends MultiTouchActivity {
 
 	buttonRight.setRunmeDown(new Runnable() {
 	    public void run() {
-		world.player.setXAcc(0.001f);
+		world.player.setXAcc(0.5f);
 	    }
 	});
 
@@ -110,7 +110,7 @@ public class OpenGLActivity extends MultiTouchActivity {
 
 	buttonDown.setRunmeDown(new Runnable() {
 	    public void run() {
-		world.player.setYAcc(-0.001f);
+		world.player.setYAcc(-0.5f);
 	    }
 	});
 
@@ -122,7 +122,7 @@ public class OpenGLActivity extends MultiTouchActivity {
 
 	buttonUp.setRunmeDown(new Runnable() {
 	    public void run() {
-		world.player.setYAcc(0.001f);
+		world.player.setYAcc(0.5f);
 	    }
 	});
 

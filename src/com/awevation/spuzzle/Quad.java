@@ -1,5 +1,6 @@
 package com.awevation.spuzzle;
 
+import android.util.Log;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -9,6 +10,8 @@ import android.opengl.GLES20;
 import android.opengl.Matrix;
 
 class Quad {
+    private String TAG = "Quad";
+
     private FloatBuffer vertexBuffer;
     private ShortBuffer indicesBuffer;
     private float height;
@@ -22,13 +25,15 @@ class Quad {
     private int mProgram;
     private int posAttr;
     private int texAttr;
-    private int mMVPMatrixHandle;
+    private int mMVMatrixHandle;
+    private int mPMatrixHandle;
 
     private final String vertexShaderCode =
 	"attribute vec4 vPosition;" +
-	"uniform mat4 uMVPMatrix;" +
+	"uniform mat4 uMVMatrix;" +
+	"uniform mat4 uPMatrix;" +
 	"void main() {" +
-	"  gl_Position = uMVPMatrix * vPosition;" +
+	"  gl_Position = uPMatrix * uMVMatrix * vPosition;" +
 	"}";
 
     private final String fragmentShaderCode =
@@ -46,8 +51,8 @@ class Quad {
     static float quadCoords[] = {
 	-0.5f,  0.5f, 0.0f,   // top left
 	-0.5f, -0.5f, 0.0f,   // bottom left
-	0.5f, -0.5f, 0.0f,   // bottom right
-	0.5f,  0.5f, 0.0f  // top right
+	 0.5f, -0.5f, 0.0f,   // bottom right
+	 0.5f,  0.5f, 0.0f  // top right
     };
 
     private short indices[] = {1, 0, 2, 3};
@@ -95,14 +100,22 @@ class Quad {
     }
 
     public void update(float dt) {
-	xVel += xAcc;
-	yVel += yAcc;
+	xVel += xAcc * dt;
+	yVel += yAcc * dt;
 
 	xPos += xVel;
 	yPos += yVel;
     }
 
-    public void draw(float[] mvpMatrix) {
+    public void draw(MatrixStack stack) {
+	stack.push();
+
+	stack.loadIdentity();
+
+	Log.d(TAG, "xPos: " + Float.toString(xPos));
+
+	stack.translate(xPos, yPos, 0.f);
+
 	GLES20.glUseProgram(mProgram);
 
 	posAttr = GLES20.glGetAttribLocation(mProgram, "vPosition");
@@ -114,13 +127,18 @@ class Quad {
 
 	GLES20.glUniform4f(texAttr, 0.0f, 0.0f, 1.0f, 1.0f);
 
-	mMVPMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uMVPMatrix");
-
-	GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mvpMatrix, 0);
+	mMVMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uMVMatrix");
+	mPMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uPMatrix");
+	
+	GLES20.glUniformMatrix4fv(mMVMatrixHandle, 1, false, stack.mvMatrix, 0);
+	GLES20.glUniformMatrix4fv(mPMatrixHandle, 1, false, stack.pMatrix, 0);
+	//GLES20.glUniformMatrix4fv(mMVMatrixHandle, 1, false, mvpm, 0);
 
 	GLES20.glDrawElements(GLES20.GL_TRIANGLE_STRIP, 4, GLES20.GL_UNSIGNED_SHORT, indicesBuffer);
 
 	GLES20.glDisableVertexAttribArray(posAttr);
+
+	stack.pop();
     }
 }
 
