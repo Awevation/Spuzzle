@@ -1,0 +1,18 @@
+# view res/layout/controller.xml #generated:16
+# view res/layout/controller.xml #generated:30
+# view res/layout/controller.xml #generated:39
+# view res/layout/controller.xml #generated:8
+-keep class com.awevation.spuzzle.ControllerButton { <init>(...); }
+
+# view res/layout/main.xml #generated:7
+-keep class com.awevation.spuzzle.MyGLSurfaceView { <init>(...); }
+
+# view AndroidManifest.xml #generated:15
+-keep class com.awevation.spuzzle.OpenGLActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:7
+-keep class com.awevation.spuzzle.StartActivity { <init>(...); }
+
+# onClick res/layout/begin.xml #generated:8
+-keepclassmembers class * { *** begin(...); }
+
