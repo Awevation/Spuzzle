@@ -15,16 +15,14 @@ public class World {
 
     public void init() {
 	player = new Quad();
-	test = new Quad();
+	test = new Quad(100f, 100f);
     }
 
     public void update(float dt) {
 	//account for the difference between time and usable time
 	dt /= 1000.f;
 	player.update(dt);
-	test.xPos = 1.f;
-	test.yPos = 1.f;
-	test.zPos = 0.f;
+	test.update(dt);
     }
 
     public void draw(MatrixStack stack) {

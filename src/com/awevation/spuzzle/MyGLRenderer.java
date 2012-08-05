@@ -32,9 +32,12 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     }
     public void onSurfaceCreated(GL10 unused, EGLConfig config) {
         // Set the background frame color
-        GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        GLES20.glClearColor(0.2f, 0.6f, 0.0f, 1.0f);
 	GLES20.glDisable(GLES20.GL_DEPTH_TEST);
 	GLES20.glDepthMask(false);
+	
+	GLES20.glBlendFunc(GLES20.GL_ONE, GLES20.GL_ONE_MINUS_SRC_ALPHA);
+	GLES20.glEnable(GLES20.GL_BLEND);
 
 	world.init();
     }
@@ -56,7 +59,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     	    //Matrix.setIdentityM(mMMatrix, 0);
     	    //Matrix.translateM(mMMatrix, 0, world.player.xPos, world.player.yPos, -3.f);
 	    //matrixStack.translate(world.player.xPos, world.player.yPos, -3.f);
-	    matrixStack.translate(100.f, 0.f, 0.f);
+	    matrixStack.translate(0.f, 0.f, 0.f);
     	    //Matrix.multiplyMM(mMVMatrix, 0, mMMatrix, 0, mVMatrix, 0);
     	    //Matrix.multiplyMM(mMVPMatrix, 0, mProjMatrix, 0, mMVMatrix, 0);
 	

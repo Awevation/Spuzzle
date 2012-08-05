@@ -20,13 +20,6 @@ public class MatrixStack {
     }
 
     public void push() {
-	/*if(stackM.empty() || stackV.empty()) {
-	    Log.d(TAG, "say wha? I'm empty.... ERROR ERROR");
-	} else {
-	    //mMatrixPrev = (float[]) stackM.peek();
-	    //vMatrixPrev = (float[]) stackV.peek();
-	}*/
-
 	float[] mvMatrixDupe = mvMatrix.clone();
 
 	stack.push(mvMatrixDupe);

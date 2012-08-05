@@ -28,6 +28,7 @@ class Quad {
     private int texAttr;
     private int mMVMatrixHandle;
     private int mPMatrixHandle;
+    private float alpha = 0f;
 
     private final String vertexShaderCode =
 	"attribute vec4 vPosition;" +
@@ -58,11 +59,17 @@ class Quad {
 
     private short indices[] = {1, 0, 2, 3};
 
-    float color[] = {
-	0.0f, 0.0f, 1.0f, 1.0f
-    };
-
     public Quad() {
+	init();
+    }
+
+    public Quad(float xPos, float yPos) {
+	init();
+	this.xPos = xPos;
+	this.yPos = yPos;
+    }
+
+    public void init() {
 	ByteBuffer vbb = ByteBuffer.allocateDirect(quadCoords.length * 4); //each float is four bytes
 	vbb.order(ByteOrder.nativeOrder());
 	vertexBuffer = vbb.asFloatBuffer();
@@ -100,12 +107,24 @@ class Quad {
 	this.yAcc = yAcc;
     }
 
+    private float alphaInc = 0.01f;
+
     public void update(float dt) {
 	xVel += xAcc * dt;
 	yVel += yAcc * dt;
 
 	xPos += xVel;
+	if(xPos > 1280) {
+	    xPos = 250;
+	}
 	yPos += yVel;
+
+	Log.d(TAG, "x: " + Float.toString(xPos));
+	if(alpha > 1.0f || alpha < 0.0f ) {
+	    alphaInc *= -1;
+	}
+
+	alpha += alphaInc;
     }
 
     public void draw(MatrixStack stack) {
@@ -125,7 +144,7 @@ class Quad {
 
 	GLES20.glEnableVertexAttribArray(posAttr);
 
-	GLES20.glUniform4f(texAttr, 0.0f, 0.0f, 1.0f, 1.0f);
+	GLES20.glUniform4f(texAttr, 0.0f, 0.0f, 1.0f, alpha);
 
 	mMVMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uMVMatrix");
 	mPMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uPMatrix");
