@@ -21,6 +21,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     private float[] mMMatrix= new float[16];
     private float[] mMVMatrix = new float[16];
     private float[] mRotationMatrix = new float[16];
+    private float[] mvMatrix = new float[16];
 
     private volatile double dt;
     private volatile double endTime; //for working out the dt
@@ -52,21 +53,24 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 	    GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
 	    //Matrix.setIdentityM(mVMatrix, 0);
 
-	    matrixStack.setProjection(mProjMatrix);
+	    Matrix.setIdentityM(mvMatrix, 0);
+	    Matrix.translateM(mvMatrix, 0, 0f, 0f, 0f);
 
-	    matrixStack.loadIdentity();
+	    //matrixStack.setProjection(mProjMatrix);
+
+	    //matrixStack.loadIdentity();
 
     	    //Matrix.setIdentityM(mMMatrix, 0);
     	    //Matrix.translateM(mMMatrix, 0, world.player.xPos, world.player.yPos, -3.f);
 	    //matrixStack.translate(world.player.xPos, world.player.yPos, -3.f);
-	    matrixStack.translate(0.f, 0.f, 0.f);
+	    //matrixStack.translate(0.f, 100.f, 0.f);
     	    //Matrix.multiplyMM(mMVMatrix, 0, mMMatrix, 0, mVMatrix, 0);
     	    //Matrix.multiplyMM(mMVPMatrix, 0, mProjMatrix, 0, mMVMatrix, 0);
 	
     	    //Matrix.setRotateM(mRotationMatrix, 0, mAngle, 0, 0, 1);
 	    //Matrix.multiplyMM(mMVPMatrix, 0, mRotationMatrix, 0, mMVPMatrix, 0);
     	   
-	    world.draw(matrixStack);
+	    world.draw(mvMatrix, mProjMatrix);
 
     	    endTime = System.currentTimeMillis();
 	} else {

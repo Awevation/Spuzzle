@@ -8,6 +8,8 @@ import java.nio.ShortBuffer;
 import java.nio.IntBuffer;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
+import android.graphics.Bitmap;
+import java.io.InputStream;
 
 class Quad {
     private String TAG = "Quad";
@@ -23,9 +25,14 @@ class Quad {
     private float yVel = 0;
     private float xAcc = 0;
     private float yAcc = 0;
+    private float angle = 0;
+    private float scale = 0;
     private int mProgram;
     private int posAttr;
     private int texAttr;
+    private float[] mMatrix = new float[16]; //The model matrix, for the local coordinate system
+    private float[] rMatrix = new float[16]; //rotation
+    private float[] mvMatrix = new float[16];
     private int mMVMatrixHandle;
     private int mPMatrixHandle;
     private float alpha = 0f;
@@ -40,6 +47,7 @@ class Quad {
 
     private final String fragmentShaderCode =
 	"precision mediump float;" +
+	"uniform sampler2D uSampler;" +
 	"uniform vec4 vColor;" +
 	"void main() {" +
 	"  gl_FragColor = vColor;" +
@@ -110,30 +118,45 @@ class Quad {
     private float alphaInc = 0.01f;
 
     public void update(float dt) {
+	scale = 20f;
+
 	xVel += xAcc * dt;
 	yVel += yAcc * dt;
 
 	xPos += xVel;
-	if(xPos > 1280) {
+	if(xPos > 800) {
 	    xPos = 250;
 	}
 	yPos += yVel;
 
-	Log.d(TAG, "x: " + Float.toString(xPos));
 	if(alpha > 1.0f || alpha < 0.0f ) {
 	    alphaInc *= -1;
 	}
 
 	alpha += alphaInc;
+
+	angle += 1f;
+
+	if(angle > 360f) {
+	    angle = 0f;
+	}
     }
 
-    public void draw(MatrixStack stack) {
-	stack.push();
+    public void draw(float[] mvMatrix, float[] pMatrix) {
+	//stack.push();
 
-	stack.loadIdentity();
+	//stack.loadIdentity();
 
-	stack.translate(xPos, yPos, 0.f);
-	stack.scale(30f, 30f);
+	Matrix.setIdentityM(mMatrix, 0);
+	//Matrix.setIdentityM(mvMatrix, 0);
+
+	Matrix.translateM(mMatrix, 0, xPos, yPos, 0.f);
+	Matrix.multiplyMM(mvMatrix, 0, mvMatrix, 0, mMatrix, 0);
+	Matrix.scaleM(mvMatrix, 0, scale, scale, 0f);
+	Matrix.rotateM(mvMatrix, 0, angle, 0f, 0f, 1f);
+
+	//stack.translate(xPos, yPos, 0.f);
+	//stack.scale(30f, 30f);
 
 	GLES20.glUseProgram(mProgram);
 
@@ -149,14 +172,14 @@ class Quad {
 	mMVMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uMVMatrix");
 	mPMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uPMatrix");
 
-	GLES20.glUniformMatrix4fv(mMVMatrixHandle, 1, false, stack.getMV(), 0);
-	GLES20.glUniformMatrix4fv(mPMatrixHandle, 1, false, stack.pMatrix, 0);
+	GLES20.glUniformMatrix4fv(mMVMatrixHandle, 1, false, mvMatrix, 0);
+	GLES20.glUniformMatrix4fv(mPMatrixHandle, 1, false, pMatrix, 0);
 
 	GLES20.glDrawElements(GLES20.GL_TRIANGLE_STRIP, 4, GLES20.GL_UNSIGNED_SHORT, indicesBuffer);
 
 	GLES20.glDisableVertexAttribArray(posAttr);
 
-	stack.pop();
+	//stack.pop();
     }
 }
 

@@ -51,7 +51,7 @@ public class OpenGLActivity extends MultiTouchActivity {
 	buttonUp.setOnTouchListener(this);
 	buttonDown.setOnTouchListener(this);
 
-	final float vel = 8f;
+	final float vel = 15f;
 	buttonLeft.setRunmeDown(new Runnable() {
 	    public void run() {
 		world.player.setXAcc(-vel);

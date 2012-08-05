@@ -14,7 +14,7 @@ public class World {
     }
 
     public void init() {
-	player = new Quad();
+	player = new Quad(15f, 60f);
 	test = new Quad(100f, 100f);
     }
 
@@ -25,8 +25,8 @@ public class World {
 	test.update(dt);
     }
 
-    public void draw(MatrixStack stack) {
-	player.draw(stack);
-	test.draw(stack);
+    public void draw(float[] mvMatrix, float[] pMatrix) {
+	player.draw(mvMatrix, pMatrix);
+	test.draw(mvMatrix, pMatrix);
     }
 }

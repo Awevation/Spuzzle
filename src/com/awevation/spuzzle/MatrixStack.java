@@ -47,13 +47,24 @@ public class MatrixStack {
 
     public void translate(float x, float y, float z) {
 	//float[] tMatrix = new float[16];
-	Matrix.translateM(mvMatrix, 0, x, y, z);
+	//Matrix.translateM(mvMatrix, 0, x, y, z);
 	//Matrix.multiplyMM(mvMatrix, 0, mvMatrix, 0, tMatrix, 0);
 
 	//mvMatrix[3] += (x / mvMatrix[15]);
 	//mvMatrix[7] += (y / mvMatrix[15]);
 	//mvMatrix[11] += (z / mvMatrix[15]);
 	//Matrix.multiplyMM(mvMatrix, 0, mMatrix, 0, vMatrix, 0);
+	
+	float[] mv = new float[16];
+
+	Matrix.setIdentityM(mv, 0);
+
+	mv[12] = mv[0] * x + mv[4] * y + mv[8]  * z + mv[12];
+	mv[13] = mv[1] * x + mv[5] * y + mv[9]  * z + mv[13];
+	mv[14] = mv[2] * x + mv[6] * y + mv[10] * z + mv[14];
+	mv[15] = mv[3] * x + mv[7] * y + mv[11] * z + mv[15];
+
+	Matrix.multiplyMM(mvMatrix, 0, mvMatrix, 0, mv, 0);
     }
 
     public void scale(float x, float y) {
