@@ -14,18 +14,9 @@ public class MatrixStack {
     public float[] mvMatrix = new float[16];
     public float[] mvpMatrix = new float[16];
 
-    private Stack stackM = new Stack();
-    private Stack stackV = new Stack();
-
-    private float[] mMatrixCurr;
-    private float[] vMatrixCurr;
-    private float[] mMatrixPrev = new float[16];
-    private float[] vMatrixPrev = new float[16];
+    private Stack stack = new Stack();
 
     public MatrixStack() {
-	Log.d(TAG, "Instantiated");
-	stackM.push(mMatrix);
-	stackV.push(vMatrix);
     }
 
     public void push() {
@@ -36,37 +27,25 @@ public class MatrixStack {
 	    //vMatrixPrev = (float[]) stackV.peek();
 	}*/
 
+	float[] mvMatrixDupe = mvMatrix.clone();
 
-	float[] mMatrixCurr = (float[]) stackM.peek();
-	float[] vMatrixCurr = (float[]) stackV.peek();
-
-	float[] mMatrixDupe = new float[16];
-	float[] vMatrixDupe = new float[16];
-
-	for(int i = 0; i < 16; i++) {
-	    mMatrixDupe[i] = mMatrixCurr[i];
-	    vMatrixDupe[i] = vMatrixCurr[i];
-	}
-
-	stackM.push(mMatrixDupe);
-	stackV.push(vMatrixDupe);
+	stack.push(mvMatrixDupe);
     }
 
     public void pop() {
-	if(stackV.empty() || stackM.empty()) {
+	if(stack.empty()) {
 	    Log.d(TAG, "Can't pop this empty stack...");
 	} else {
-	    stackM.pop();
-	    stackV.pop();
-	    mMatrix = (float[]) stackM.peek();
-	    vMatrix = (float[]) stackV.peek();
-
+	    mvMatrix = (float[]) stack.pop();
 	}
     }
 
     public void loadIdentity() {
-	Matrix.setIdentityM(mMatrix, 0);
-	Matrix.setIdentityM(vMatrix, 0);
+	//Matrix.setIdentityM(mMatrix, 0);
+	//Matrix.setIdentityM(vMatrix, 0);
+	Matrix.setIdentityM(mvMatrix, 0);
+	//Matrix.setIdentityM((float[]) stackM.peek(), 0);
+	//Matrix.setIdentityM((float[]) stackV.peek(), 0);
     }
 
     public void setProjection(float[] pMatrix) {
@@ -74,8 +53,30 @@ public class MatrixStack {
     }
 
     public void translate(float x, float y, float z) {
-	Matrix.translateM((float[]) stackM.peek(), 0, x, y, z);
-	Matrix.multiplyMM(mvMatrix, 0, (float[]) stackM.peek(), 0, (float[]) stackV.peek(), 0);
+	//float[] tMatrix = new float[16];
+	Matrix.translateM(mvMatrix, 0, x, y, z);
+	//Matrix.multiplyMM(mvMatrix, 0, mvMatrix, 0, tMatrix, 0);
+
+	//mvMatrix[3] += (x / mvMatrix[15]);
+	//mvMatrix[7] += (y / mvMatrix[15]);
+	//mvMatrix[11] += (z / mvMatrix[15]);
+	//Matrix.multiplyMM(mvMatrix, 0, mMatrix, 0, vMatrix, 0);
+    }
+
+    public void scale(float x, float y) {
+	Matrix.scaleM(mvMatrix, 0, x, y, 0f);
+    }
+
+    public float[] getM() {
+	return mMatrix;
+    }
+
+    public float[] getV() {
+	return vMatrix;
+    }
+
+    public float[] getMV() {
+	return mvMatrix;
     }
 
     public float[] getMVP() {

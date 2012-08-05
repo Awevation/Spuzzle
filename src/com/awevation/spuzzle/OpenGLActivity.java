@@ -46,47 +46,15 @@ public class OpenGLActivity extends MultiTouchActivity {
 	buttonDown = (ControllerButton) findViewById(R.id.Down);
 	buttonUp = (ControllerButton) findViewById(R.id.Up);
 
-	/*buttonLeft.setOnTouchListener(new View.OnTouchListener() {
-	    public boolean onTouch(View v, MotionEvent e) {
-		switch (e.getAction()) {
-		    case MotionEvent.ACTION_DOWN:
-			v.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
-			v.setPressed(true);
-			goLeft(true);
-			return true;
-		    case MotionEvent.ACTION_UP:
-			v.setPressed(false);
-			goLeft(false);
-			return true;
-		}
-		return false;
-	    }
-	});
-
-	buttonRight.setOnTouchListener(new View.OnTouchListener() {
-	    public boolean onTouch(View v, MotionEvent e) {
-		switch (e.getAction()) {
-		    case MotionEvent.ACTION_DOWN:	
-			v.setPressed(true);
-			v.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
-			goRight(true);
-			return true;
-		    case MotionEvent.ACTION_UP:
-			v.setPressed(false);
-			goRight(false);
-			return true;
-		}
-		return false;
-	    }
-	});*/
 	buttonLeft.setOnTouchListener(this);
 	buttonRight.setOnTouchListener(this);
 	buttonUp.setOnTouchListener(this);
 	buttonDown.setOnTouchListener(this);
 
+	final float vel = 10f;
 	buttonLeft.setRunmeDown(new Runnable() {
 	    public void run() {
-		world.player.setXAcc(-0.5f);
+		world.player.setXAcc(-vel);
 	    }
 	});
 
@@ -98,7 +66,7 @@ public class OpenGLActivity extends MultiTouchActivity {
 
 	buttonRight.setRunmeDown(new Runnable() {
 	    public void run() {
-		world.player.setXAcc(0.5f);
+		world.player.setXAcc(vel);
 	    }
 	});
 
@@ -110,7 +78,7 @@ public class OpenGLActivity extends MultiTouchActivity {
 
 	buttonDown.setRunmeDown(new Runnable() {
 	    public void run() {
-		world.player.setYAcc(-0.5f);
+		world.player.setYAcc(-vel);
 	    }
 	});
 
@@ -122,7 +90,7 @@ public class OpenGLActivity extends MultiTouchActivity {
 
 	buttonUp.setRunmeDown(new Runnable() {
 	    public void run() {
-		world.player.setYAcc(0.5f);
+		world.player.setYAcc(vel);
 	    }
 	});
 
@@ -132,59 +100,4 @@ public class OpenGLActivity extends MultiTouchActivity {
 	    }
 	});
     }
-
-    /*public void goRight(boolean go) {
-	if(go) {
-    	    new Thread(new Runnable() {
-   		public void run() {
-    		    while(buttonRight.isPressed()) {
-    			//GLView.mRenderer.xVel += 0.00000001f;	
-    		    }
-    		}
-    	    }).start();
-
-	} else {
-	    new Thread(new Runnable() {
-		public void run() {
-		    while(!buttonRight.isPressed()) {
-			if(GLView.mRenderer.xVel < 0.001f) {
-			    //GLView.mRenderer.xVel = 0.f;
-			    return;
-			}
-			//GLView.mRenderer.xVel -= 0.00000005f;
-		    }
-		}
-	    }).start();
-	}
-    }
-    public void goLeft(boolean go) {
-	if(go) {
-    	    new Thread(new Runnable() {
-   		public void run() {
-    		    while(buttonLeft.isPressed()) {
-    			//GLView.mRenderer.xVel += -0.00000001f;	
-    		    }
-    		}
-    	    }).start();
-
-	} else {
-	    new Thread(new Runnable() {
-		public void run() {
-		    while(!buttonLeft.isPressed()) {
-			if(GLView.mRenderer.xVel > -0.001f) {
-			    //GLView.mRenderer.xVel = 0.f;
-			    return;
-			}
-			//GLView.mRenderer.xVel -= -0.00000005f;
-		    }
-		}
-	    }).start();
-	}
-    }
-
-    public void goDown(View view) {
-    }
-
-    public void goUp(View view) {
-    }*/
 }

@@ -18,6 +18,7 @@ class Quad {
     private float width;
     public float xPos = 0;
     public float yPos = 0;
+    public float zPos = 0;
     private float xVel = 0;
     private float yVel = 0;
     private float xAcc = 0;
@@ -112,9 +113,8 @@ class Quad {
 
 	stack.loadIdentity();
 
-	Log.d(TAG, "xPos: " + Float.toString(xPos));
-
 	stack.translate(xPos, yPos, 0.f);
+	stack.scale(30f, 30f);
 
 	GLES20.glUseProgram(mProgram);
 
@@ -129,10 +129,9 @@ class Quad {
 
 	mMVMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uMVMatrix");
 	mPMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uPMatrix");
-	
-	GLES20.glUniformMatrix4fv(mMVMatrixHandle, 1, false, stack.mvMatrix, 0);
+
+	GLES20.glUniformMatrix4fv(mMVMatrixHandle, 1, false, stack.getMV(), 0);
 	GLES20.glUniformMatrix4fv(mPMatrixHandle, 1, false, stack.pMatrix, 0);
-	//GLES20.glUniformMatrix4fv(mMVMatrixHandle, 1, false, mvpm, 0);
 
 	GLES20.glDrawElements(GLES20.GL_TRIANGLE_STRIP, 4, GLES20.GL_UNSIGNED_SHORT, indicesBuffer);
 
