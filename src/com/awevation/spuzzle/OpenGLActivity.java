@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.opengl.GLSurfaceView;
 import android.content.Intent;
 import android.view.*;
-import android.app.Fragment;
 import android.widget.Button;
 import android.util.Log;
 import java.lang.Thread;
