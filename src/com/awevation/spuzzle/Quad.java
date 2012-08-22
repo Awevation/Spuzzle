@@ -85,8 +85,8 @@ class Quad {
     static float texCoords[] = {
 	0.0f, 0.0f,
 	0.0f, 1.0f,
-	1.0f, 0.0f,
-	1.0f, 1.0f							    
+	1.0f, 1.0f,
+	1.0f, 0.0f							    
     };
 
     private short indices[] = {1, 0, 2, 3};
@@ -180,6 +180,7 @@ class Quad {
     }
 
     private float alphaInc = 0.01f;
+    private float angleInc = 1f;
 
     public void update(float dt) {
 	scale = 20f;
@@ -217,7 +218,13 @@ class Quad {
 
 	alpha += alphaInc;
 
-	angle += 1f;
+	if(xVel != 0) {
+	    angleInc = 1f + (xVel * 2);
+	} else {
+	    angleInc = 1f;
+	}
+
+	angle += angleInc;
 
 	if(angle > 360f) {
 	    angle = 0f;
