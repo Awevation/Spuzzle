@@ -4,10 +4,11 @@ import android.util.Log;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-import java.nio.ShortBuffer;
 import java.nio.IntBuffer;
+import java.nio.ShortBuffer;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
+import android.opengl.GLUtils;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import java.io.InputStream;
@@ -18,8 +19,9 @@ class Quad {
     private String TAG = "Quad";
 
     private FloatBuffer vertexBuffer;
+    private FloatBuffer texCoBuffer;
     private ShortBuffer indicesBuffer;
-	private IntBuffer texBuffer;
+    private IntBuffer texBuffer;
     private float height;
     private float width;
     public float xPos = 0;
@@ -34,30 +36,38 @@ class Quad {
     private int mProgram;
     private int posAttr;
     private int texAttr;
-	private int uSampler;
+    private int uSampler;
     private float[] mMatrix = new float[16]; //The model matrix, for the local coordinate system
     private float[] rMatrix = new float[16]; //rotation
     private float[] mvMatrix = new float[16];
     private int mMVMatrixHandle;
     private int mPMatrixHandle;
     private float alpha = 0f;
-	private Context context;
-	private IntBuffer texture;
+    private Context context;
+    private int[] texture = new int[1];
 
     private final String vertexShaderCode =
 	"attribute vec4 vPosition;" +
+	"attribute vec2 aTexCo;" +
+	"varying vec2 vTexCo;" +
 	"uniform mat4 uMVMatrix;" +
 	"uniform mat4 uPMatrix;" +
 	"void main() {" +
 	"  gl_Position = uPMatrix * uMVMatrix * vPosition;" +
+	"  vTexCo = aTexCo;" +
 	"}";
 
     private final String fragmentShaderCode =
 	"precision mediump float;" +
-	//"uniform sampler2D uSampler;" +
+	"uniform sampler2D uSampler;" +
 	"uniform vec4 vColor;" +
+	"varying vec2 vTexCo;" +
 	"void main() {" +
-	"  gl_FragColor = vColor;" +
+	//"gl_FragColor = vec4(0.0, 0.0, 1.0, 1.0);" +
+	"gl_FragColor = texture2D(uSampler, vec2(vTexCo));" +
+        	"if(gl_FragColor.a < 0.1) {" +
+		"	discard;" +
+		"}" +
 	"}";
 
     static final int COORDS_PER_VERTEX = 3;
@@ -70,6 +80,13 @@ class Quad {
 	-0.5f, -0.5f, 0.0f,   // bottom left
 	 0.5f, -0.5f, 0.0f,   // bottom right
 	 0.5f,  0.5f, 0.0f  // top right
+    };
+
+    static float texCoords[] = {
+	0.0f, 0.0f,
+	0.0f, 1.0f,
+	1.0f, 0.0f,
+	1.0f, 1.0f							    
     };
 
     private short indices[] = {1, 0, 2, 3};
@@ -98,11 +115,16 @@ class Quad {
 	indicesBuffer = ibb.asShortBuffer();
 	indicesBuffer.put(indices);
 	indicesBuffer.position(0);
-	
-	//ByteBuffer tbb = ByteBuffer.allocateDirect(1312); //Trust. Just worked it out using a bloody hexdump and line count. (no internet)
-	//tbb.order(ByteOrder.nativeOrder());
-	//texBuffer = tbb.asIntBuffer();
 
+	ByteBuffer tcbb = ByteBuffer.allocateDirect(texCoords.length * 4);
+	tcbb.order(ByteOrder.nativeOrder());
+	texCoBuffer = tcbb.asFloatBuffer();
+	texCoBuffer.put(texCoords);
+	texCoBuffer.position(0);
+	
+	ByteBuffer tbb = ByteBuffer.allocateDirect(256*256*4);
+	tbb.order(ByteOrder.nativeOrder());
+	texBuffer = tbb.asIntBuffer();
 
 	int vertexShader = MyGLRenderer.loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
 	int fragmentShader = MyGLRenderer.loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
@@ -112,15 +134,33 @@ class Quad {
 	GLES20.glAttachShader(mProgram, fragmentShader); // add the fragment shader to program
 	GLES20.glLinkProgram(mProgram);                  // creates OpenGL ES program executables
 
-	/*/load up the texture!
-	Bitmap bitmap;
-	BitmapFactory bmfactory = new BitmapFactory();
-	Resources res = context.getResources();
-	bitmap = bmfactory.decodeResource(res, R.drawable.anser);
-	//bitmap.copyPixelsToBuffer(texBuffer);
+	// We need to flip the textures vertically:
+       	android.graphics.Matrix flip = new android.graphics.Matrix();
+ 	flip.postScale(1f, -1f);
+	BitmapFactory.Options opts = new BitmapFactory.Options();
+	opts.inScaled = false;
+	        
+	// Load up, and flip the texture:
+	Bitmap temp = BitmapFactory.decodeResource(context.getResources(), R.drawable.anser, opts);
+	Bitmap bmp = Bitmap.createBitmap(temp, 0, 0, temp.getWidth(), temp.getHeight(), flip, true);
+	temp.recycle();
+     
+	//Bitmap bmp;
+	//BitmapFactory bmfactory = new BitmapFactory();
+	//Resources res = context.getResources();
+	//bmp = bmfactory.decodeResource(res, R.drawable.anser);
+	bmp.copyPixelsToBuffer(texBuffer);
 
-	//GLES20.glGenTextures(1, texture);
-	//GLES20.glTexImage2D(texture.get(0), 0, GLES20.GL_TEXTURE_2D, 16, 24, 0, GLES20.GL_RGBA, GLES20.GL_RGBA, tbb);*/
+	GLES20.glGenTextures(1, texture, 0);
+	GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+	GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texture[0]);
+	GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST);
+	GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
+	//GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA4, 256, 256, 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, texBuffer);
+	GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bmp, 0);
+	//GLES20.glGenerateMipmap(GLES20.GL_TEXTURE_2D);
+	GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
+	bmp.recycle();
     }
 
     public void setXVel(float xVel) {
@@ -185,10 +225,6 @@ class Quad {
     }
 
     public void draw(float[] mvMatrix, float[] pMatrix) {
-	//stack.push();
-
-	//stack.loadIdentity();
-
 	Matrix.setIdentityM(mMatrix, 0);
 	//Matrix.setIdentityM(mvMatrix, 0);
 
@@ -197,23 +233,22 @@ class Quad {
 	Matrix.scaleM(mvMatrix, 0, scale, scale, 0f);
 	Matrix.rotateM(mvMatrix, 0, angle, 0f, 0f, 1f);
 
-	//stack.translate(xPos, yPos, 0.f);
-	//stack.scale(30f, 30f);
-
 	GLES20.glUseProgram(mProgram);
 
 	posAttr = GLES20.glGetAttribLocation(mProgram, "vPosition");
-	texAttr = GLES20.glGetUniformLocation(mProgram, "vColor");
-	//uSampler = GLES20.glGetUniformLocation(mProgram, "uSampler");
+	texAttr = GLES20.glGetAttribLocation(mProgram, "aTexCo");
+	uSampler = GLES20.glGetUniformLocation(mProgram, "uSampler");
 
 	GLES20.glVertexAttribPointer(posAttr, COORDS_PER_VERTEX, GLES20.GL_FLOAT, false, 0, vertexBuffer);
+	GLES20.glVertexAttribPointer(texAttr, 2, GLES20.GL_FLOAT, false, 0, texCoBuffer);
 
 	GLES20.glEnableVertexAttribArray(posAttr);
+	GLES20.glEnableVertexAttribArray(texAttr);
 
-
-	//GLES20.glBindTexture(GLES20.GL_ACTIVE_TEXTURE, texture.get(0));
-	GLES20.glUniform4f(texAttr, 0.0f, 0.0f, 1.0f, alpha);
-	//GLES20.glUniform1i(uSampler, 0);
+	GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+	GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texture[0]);
+	//GLES20.glUniform4f(texAttr, );
+	GLES20.glUniform1i(uSampler, 0);
 
 	mMVMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uMVMatrix");
 	mPMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uPMatrix");
@@ -224,8 +259,9 @@ class Quad {
 	GLES20.glDrawElements(GLES20.GL_TRIANGLE_STRIP, 4, GLES20.GL_UNSIGNED_SHORT, indicesBuffer);
 
 	GLES20.glDisableVertexAttribArray(posAttr);
+	GLES20.glDisableVertexAttribArray(texAttr);
 
-	//stack.pop();
+	GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
     }
 }
 
