@@ -15,7 +15,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
     private MatrixStack matrixStack = new MatrixStack();
     private World world;
-	private Context context;
+    private Context context;
     private float[] mVMatrix = new float[16];
     private float[] mMVPMatrix = new float[16];
     private float[] mProjMatrix = new float[16];
@@ -37,7 +37,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     }
     public void onSurfaceCreated(GL10 unused, EGLConfig config) {
         // Set the background frame color
-        GLES20.glClearColor(0.2f, 0.6f, 0.0f, 1.0f);
+        GLES20.glClearColor(0.5f, 0.1f, 0.4f, 1.0f);
 	GLES20.glDisable(GLES20.GL_DEPTH_TEST);
 	GLES20.glDepthMask(false);
 	

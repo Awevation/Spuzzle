@@ -27,7 +27,7 @@ public class ControllerButton extends Button {
 	    case MotionEvent.ACTION_UP:
 		setPressed(false);
 		if(runmeUp != null) {
-		    //runmeUp.run();
+		    runmeUp.run();
 		}
 		break;
 	}
