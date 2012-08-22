@@ -33,11 +33,8 @@ public class OpenGLActivity extends MultiTouchActivity {
 	//Get a hold of the picture-generator
 	GLView = (MyGLSurfaceView) findViewById(R.id.GLView);
 
-	//Forge a new world
-	world = new World();
-
-	//Send the picture generator our world
-	GLView.sendWorld(world);
+	//Get a handle on the world instantiated in the picture generator
+	world = GLView.world;
 
 	//set up the controller, then rock and roll
 	buttonLeft = (ControllerButton) findViewById(R.id.Left);

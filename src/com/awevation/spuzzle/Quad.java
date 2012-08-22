@@ -9,13 +9,17 @@ import java.nio.IntBuffer;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import java.io.InputStream;
+import android.content.Context;
+import android.content.res.Resources;
 
 class Quad {
     private String TAG = "Quad";
 
     private FloatBuffer vertexBuffer;
     private ShortBuffer indicesBuffer;
+	private IntBuffer texBuffer;
     private float height;
     private float width;
     public float xPos = 0;
@@ -30,12 +34,15 @@ class Quad {
     private int mProgram;
     private int posAttr;
     private int texAttr;
+	private int uSampler;
     private float[] mMatrix = new float[16]; //The model matrix, for the local coordinate system
     private float[] rMatrix = new float[16]; //rotation
     private float[] mvMatrix = new float[16];
     private int mMVMatrixHandle;
     private int mPMatrixHandle;
     private float alpha = 0f;
+	private Context context;
+	private IntBuffer texture;
 
     private final String vertexShaderCode =
 	"attribute vec4 vPosition;" +
@@ -47,7 +54,7 @@ class Quad {
 
     private final String fragmentShaderCode =
 	"precision mediump float;" +
-	"uniform sampler2D uSampler;" +
+	//"uniform sampler2D uSampler;" +
 	"uniform vec4 vColor;" +
 	"void main() {" +
 	"  gl_FragColor = vColor;" +
@@ -67,11 +74,13 @@ class Quad {
 
     private short indices[] = {1, 0, 2, 3};
 
-    public Quad() {
+    public Quad(Context context) {
+	this.context = context;
 	init();
     }
 
-    public Quad(float xPos, float yPos) {
+    public Quad(Context context, float xPos, float yPos) {
+	this.context = context;
 	init();
 	this.xPos = xPos;
 	this.yPos = yPos;
@@ -89,6 +98,11 @@ class Quad {
 	indicesBuffer = ibb.asShortBuffer();
 	indicesBuffer.put(indices);
 	indicesBuffer.position(0);
+	
+	//ByteBuffer tbb = ByteBuffer.allocateDirect(1312); //Trust. Just worked it out using a bloody hexdump and line count. (no internet)
+	//tbb.order(ByteOrder.nativeOrder());
+	//texBuffer = tbb.asIntBuffer();
+
 
 	int vertexShader = MyGLRenderer.loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
 	int fragmentShader = MyGLRenderer.loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
@@ -97,6 +111,16 @@ class Quad {
 	GLES20.glAttachShader(mProgram, vertexShader);   // add the vertex shader to program
 	GLES20.glAttachShader(mProgram, fragmentShader); // add the fragment shader to program
 	GLES20.glLinkProgram(mProgram);                  // creates OpenGL ES program executables
+
+	/*/load up the texture!
+	Bitmap bitmap;
+	BitmapFactory bmfactory = new BitmapFactory();
+	Resources res = context.getResources();
+	bitmap = bmfactory.decodeResource(res, R.drawable.anser);
+	//bitmap.copyPixelsToBuffer(texBuffer);
+
+	//GLES20.glGenTextures(1, texture);
+	//GLES20.glTexImage2D(texture.get(0), 0, GLES20.GL_TEXTURE_2D, 16, 24, 0, GLES20.GL_RGBA, GLES20.GL_RGBA, tbb);*/
     }
 
     public void setXVel(float xVel) {
@@ -124,10 +148,28 @@ class Quad {
 	yVel += yAcc * dt;
 
 	xPos += xVel;
-	if(xPos > 800) {
-	    xPos = 250;
-	}
 	yPos += yVel;
+
+	if(yPos +10 > 130) {
+	yPos -= yVel;
+	yVel = 0.f;
+	if(xVel > 0f) {
+	xVel -= 0.05f;
+	} else if (xVel < 0) {
+	xVel += 0.05f;
+	}
+	}
+
+	if(yPos < 15) {
+	yPos = 15;
+	yVel = 0.f;
+	if(xVel > 0f) {
+	xVel -= 0.05f;
+	} else if (xVel < 0) {
+	xVel += 0.05f;
+	}
+	} 
+
 
 	if(alpha > 1.0f || alpha < 0.0f ) {
 	    alphaInc *= -1;
@@ -162,12 +204,16 @@ class Quad {
 
 	posAttr = GLES20.glGetAttribLocation(mProgram, "vPosition");
 	texAttr = GLES20.glGetUniformLocation(mProgram, "vColor");
+	//uSampler = GLES20.glGetUniformLocation(mProgram, "uSampler");
 
 	GLES20.glVertexAttribPointer(posAttr, COORDS_PER_VERTEX, GLES20.GL_FLOAT, false, 0, vertexBuffer);
 
 	GLES20.glEnableVertexAttribArray(posAttr);
 
+
+	//GLES20.glBindTexture(GLES20.GL_ACTIVE_TEXTURE, texture.get(0));
 	GLES20.glUniform4f(texAttr, 0.0f, 0.0f, 1.0f, alpha);
+	//GLES20.glUniform1i(uSampler, 0);
 
 	mMVMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uMVMatrix");
 	mPMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uPMatrix");

@@ -27,7 +27,7 @@ public class ControllerButton extends Button {
 	    case MotionEvent.ACTION_UP:
 		setPressed(false);
 		if(runmeUp != null) {
-		    runmeUp.run();
+		    //runmeUp.run();
 		}
 		break;
 	}
@@ -37,11 +37,11 @@ public class ControllerButton extends Button {
     //take in a function to run while the button is pressed down
     
     public void setRunmeDown(Runnable runme) {
-	runmeDown = runme;
+	this.runmeDown = runme;
     }
 
     //take in a function to run when.... You guessed it!
     public void setRunmeUp(Runnable runme) {
-	runmeUp = runme;
+	this.runmeUp = runme;
     }
 }

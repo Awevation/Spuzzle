@@ -15,6 +15,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
     private MatrixStack matrixStack = new MatrixStack();
     private World world;
+	private Context context;
     private float[] mVMatrix = new float[16];
     private float[] mMVPMatrix = new float[16];
     private float[] mProjMatrix = new float[16];
@@ -26,6 +27,9 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     private volatile double dt;
     private volatile double endTime; //for working out the dt
 
+	public MyGLRenderer(Context context) {
+	this.context = context;
+	}
 
     public void sendWorld(World targetworld) {
 	//receive the target world
@@ -51,14 +55,9 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
 	    // Redraw background color
 	    GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
-	    //Matrix.setIdentityM(mVMatrix, 0);
 
 	    Matrix.setIdentityM(mvMatrix, 0);
 	    Matrix.translateM(mvMatrix, 0, 0f, 0f, 0f);
-
-	    //matrixStack.setProjection(mProjMatrix);
-
-	    //matrixStack.loadIdentity();
 
     	    //Matrix.setIdentityM(mMMatrix, 0);
     	    //Matrix.translateM(mMMatrix, 0, world.player.xPos, world.player.yPos, -3.f);

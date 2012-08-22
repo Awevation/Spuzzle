@@ -15,14 +15,13 @@ public class MyGLSurfaceView extends GLSurfaceView {
     public MyGLSurfaceView(Context context, AttributeSet attrs) {
 	super(context, attrs);
 
-	mRenderer = new MyGLRenderer();
+	mRenderer = new MyGLRenderer(context);
+
+	world = new World(context);
+	mRenderer.sendWorld(world);
 
 	setEGLContextClientVersion(2);
 	setRenderer(mRenderer);
 	//setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
-    }
-
-    public void sendWorld(World targetWorld) {
-	mRenderer.sendWorld(targetWorld);
     }
 }
