@@ -13,7 +13,6 @@ import android.content.Context;
 public class MyGLRenderer implements GLSurfaceView.Renderer {
     public static final String TAG = "MyGLRenderer";
 
-    private MatrixStack matrixStack = new MatrixStack();
     private World world;
     private Context context;
     private float[] mVMatrix = new float[16];

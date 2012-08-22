@@ -66,7 +66,7 @@ class Quad {
 	//"gl_FragColor = vec4(0.0, 0.0, 1.0, 1.0);" +
 	"gl_FragColor = texture2D(uSampler, vec2(vTexCo));" +
         	"if(gl_FragColor.a < 0.1) {" +
-		"	discard;" +
+	//	"	discard;" +
 		"}" +
 	"}";
 
@@ -226,7 +226,7 @@ class Quad {
 
 	angle += angleInc;
 
-	if(angle > 360f) {
+	if(angle > 360f || angle < -360f) {
 	    angle = 0f;
 	}
     }
@@ -238,7 +238,7 @@ class Quad {
 	Matrix.translateM(mMatrix, 0, xPos, yPos, 0.f);
 	Matrix.multiplyMM(mvMatrix, 0, mvMatrix, 0, mMatrix, 0);
 	Matrix.scaleM(mvMatrix, 0, scale, scale, 0f);
-	Matrix.rotateM(mvMatrix, 0, angle, 0f, 0f, 1f);
+	Matrix.rotateM(mvMatrix, 0, angle, 0f, 0f, -1f);
 
 	GLES20.glUseProgram(mProgram);
 
