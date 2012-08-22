@@ -39,4 +39,6 @@ ehthumbs.db
 Thumbs.db
 
 bin/*
-gen/*
+gen
+gen/R.java.d
+gen/com/awevation/spuzzle/R.java
