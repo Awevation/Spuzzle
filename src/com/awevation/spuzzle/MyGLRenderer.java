@@ -26,9 +26,9 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     private volatile double dt;
     private volatile double endTime; //for working out the dt
 
-	public MyGLRenderer(Context context) {
+    public MyGLRenderer(Context context) {
 	this.context = context;
-	}
+    }
 
     public void sendWorld(World targetworld) {
 	//receive the target world
@@ -36,12 +36,13 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     }
     public void onSurfaceCreated(GL10 unused, EGLConfig config) {
         // Set the background frame color
-        GLES20.glClearColor(0.5f, 0.1f, 0.4f, 1.0f);
+        GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	GLES20.glDisable(GLES20.GL_DEPTH_TEST);
 	GLES20.glDepthMask(false);
 	
 	GLES20.glBlendFunc(GLES20.GL_ONE, GLES20.GL_ONE_MINUS_SRC_ALPHA);
 	GLES20.glEnable(GLES20.GL_BLEND);
+	GLES20.glEnable(GLES20.GL_DITHER);
 
 	world.init();
     }

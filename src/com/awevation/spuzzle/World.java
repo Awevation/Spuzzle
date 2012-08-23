@@ -17,8 +17,8 @@ public class World {
     }
 
     public void init() {
-	player = new Quad(context, 15f, 60f);
-	test = new Quad(context, 100f, 100f);
+	player = new Anser(context, 15f, 60f, R.drawable.anser);
+	test = new Quad(context, 100f, 100f, R.drawable.test);
 	entities.add(player);
 	entities.add(test);
     }

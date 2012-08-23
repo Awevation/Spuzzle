@@ -21,6 +21,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
 	mRenderer.sendWorld(world);
 
 	setEGLContextClientVersion(2);
+	setEGLConfigChooser(new MultisampleConfigChooser());
 	setRenderer(mRenderer);
 	//setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
     }
