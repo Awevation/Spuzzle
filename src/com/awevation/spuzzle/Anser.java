@@ -31,13 +31,11 @@ public class Anser extends Quad {
 
     @Override
     public void update(float dt) {
-	scale = 30f;
+	scale = 25f;
 	super.update(dt);
-	/*if(alpha > 1.0f || alpha < 0.0f ) {
+	if(alpha > 1.0f || alpha < 0.0f ) {
 	    alphaInc *= -1;
 	}
-
-	alpha += alphaInc;
 
 	if(xVel != 0) {
 	    angleInc = 1f + (xVel * 2);
@@ -49,7 +47,7 @@ public class Anser extends Quad {
 
 	if(angle > 360f || angle < -360f) {
 	    angle = 0f;
-	}*/
+	}
     }
 
     @Override

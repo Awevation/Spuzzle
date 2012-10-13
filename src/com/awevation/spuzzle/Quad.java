@@ -63,9 +63,15 @@ public class Quad {
 	"uniform sampler2D uSampler;" +
 	"uniform vec4 vColor;" +
 	"varying vec2 vTexCo;" +
+	"varying float alpha;" +
 	"void main() {" +
 		//"gl_FragColor = vec4(0.0, 0.0, 1.0, 1.0);" +
 		"gl_FragColor = texture2D(uSampler, vec2(vTexCo));" +
+		"if(gl_FragColor.a == 0.0) {" +
+		    "discard;" +
+		"} else {" +
+		  //   "gl_FragColor.a = gl_FragColor.a + alpha;" +
+		"}" +
 	"}";
 
     static final int COORDS_PER_VERTEX = 3;
@@ -232,6 +238,7 @@ public class Quad {
 	posAttr = GLES20.glGetAttribLocation(mProgram, "vPosition");
 	texAttr = GLES20.glGetAttribLocation(mProgram, "aTexCo");
 	uSampler = GLES20.glGetUniformLocation(mProgram, "uSampler");
+	int alphaHandle = GLES20.glGetUniformLocation(mProgram, "alpha");
 
 	GLES20.glVertexAttribPointer(posAttr, COORDS_PER_VERTEX, GLES20.GL_FLOAT, false, 0, vertexBuffer);
 	GLES20.glVertexAttribPointer(texAttr, 2, GLES20.GL_FLOAT, false, 0, texCoBuffer);
@@ -243,6 +250,7 @@ public class Quad {
 	GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texture);
 	//GLES20.glUniform4f(texAttr, );
 	GLES20.glUniform1i(uSampler, 0);
+	GLES20.glUniform1f(alphaHandle, alpha);
 
 	mMVMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uMVMatrix");
 	mPMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uPMatrix");
