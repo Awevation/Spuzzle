@@ -1,4 +1,4 @@
-#Build script
+#Build script (for building on Android in terminalIDE, most credit goes to SparticusRex
 
 #cd into the home dir - this way it works when run from inside vim or any other folder
 cd ~/projects/Spuzzle 
@@ -47,4 +47,3 @@ cd dist
 signer spuzzle.apk spuzzle_signed.apk
 
 cd ..
-
