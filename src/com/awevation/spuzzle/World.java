@@ -8,14 +8,16 @@ import android.content.Context;
 public class World {
     private Context context;
     public Quad player;
-    public Vector entities;
+    public Quad background;
 
+    public Vector entities;
     public World(Context context) {
 	this.context = context;
 	entities = new Vector();
     }
 
     public void init() {
+	background = new Background(context, 150f, 70f, R.drawable.waterfall);
 	player = new Anser(context, 15f, 60f, R.drawable.anser);
 	Quad cloud = new Quad(context, 100f, 100f, R.drawable.cloud);
 	Quad cloud1 = new Quad(context, 0f, 75f, R.drawable.cloud);
@@ -25,6 +27,7 @@ public class World {
 	cloud1.setXVel(0.2f);
 	cloud2.setXVel(0.1f);
 	cloud3.setXVel(0.15f);
+	entities.add(background);
 	entities.add(player);
 	entities.add(cloud);
 	entities.add(cloud1);

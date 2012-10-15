@@ -66,7 +66,10 @@ public class Quad {
 	"varying float alpha;" +
 	"void main() {" +
 		//"gl_FragColor = vec4(0.0, 0.0, 1.0, 1.0);" +
-		"gl_FragColor = texture2D(uSampler, vec2(vTexCo));" +
+		"vec4 color = texture2D(uSampler, vec2(vTexCo));" +
+		//add custom alpha, like a pro.
+		//"color.a += alpha;" +
+		"gl_FragColor = color;" +
 		"if(gl_FragColor.a == 0.0) {" +
 		    "discard;" +
 		"} else {" +
@@ -152,15 +155,15 @@ public class Quad {
     private int loadTexture(int rescource) {
 	int[] texture = new int[1];
 	// We need to flip the textures vertically:
-       	android.graphics.Matrix flip = new android.graphics.Matrix();
- 	flip.postScale(1f, -1f);
+       	//android.graphics.Matrix flip = new android.graphics.Matrix();
+ 	//flip.postScale(1f, 1f);
 	BitmapFactory.Options opts = new BitmapFactory.Options();
 	opts.inScaled = false;
 	        
 	// Load up, and flip the texture:
 	Bitmap temp = BitmapFactory.decodeResource(context.getResources(), rescource, opts);
-	Bitmap bmp = Bitmap.createBitmap(temp, 0, 0, temp.getWidth(), temp.getHeight(), flip, true);
-	temp.recycle();
+	//Bitmap bmp = Bitmap.createBitmap(temp, 0, 0, temp.getWidth(), temp.getHeight(), flip, true);
+	//temp.recycle();
      
 	GLES20.glGenTextures(1, texture, 0);
 	GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
@@ -169,10 +172,10 @@ public class Quad {
 	GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
 	//GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP);
 	//GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA4, 256, 256, 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, texBuffer);
-	GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bmp, 0);
+	GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, temp, 0);
 	GLES20.glGenerateMipmap(GLES20.GL_TEXTURE_2D);
 	GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
-	bmp.recycle();
+	temp.recycle();
 
 	return texture[0];
     }
