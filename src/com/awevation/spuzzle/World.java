@@ -9,6 +9,7 @@ public class World {
     private Context context;
     public Quad player;
     public Quad background;
+    public Quad foreground;
 
     public Vector entities;
     public World(Context context) {
@@ -18,6 +19,7 @@ public class World {
 
     public void init() {
 	background = new Background(context, 150f, 70f, R.drawable.waterfall);
+	foreground = new Background(context, 150f, 70f, R.drawable.foreground); 
 	player = new Anser(context, 15f, 60f, R.drawable.anser);
 	Quad cloud = new Quad(context, 100f, 100f, R.drawable.cloud);
 	Quad cloud1 = new Quad(context, 0f, 75f, R.drawable.cloud);
@@ -29,6 +31,7 @@ public class World {
 	cloud3.setXVel(0.15f);
 	entities.add(background);
 	entities.add(player);
+	entities.add(foreground);
 	entities.add(cloud);
 	entities.add(cloud1);
 	entities.add(cloud2);
