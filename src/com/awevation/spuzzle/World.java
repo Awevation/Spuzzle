@@ -12,9 +12,12 @@ public class World {
     public Quad foreground;
 
     public Vector entities;
+    public Vector AABBs;
+
     public World(Context context) {
 	this.context = context;
 	entities = new Vector();
+	AABBs  = new Vector();
     }
 
     public void init() {
