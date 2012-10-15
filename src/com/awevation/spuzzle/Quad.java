@@ -73,7 +73,7 @@ public class Quad {
 		"if(gl_FragColor.a == 0.0) {" +
 		    "discard;" +
 		"} else {" +
-		  //   "gl_FragColor.a = gl_FragColor.a + alpha;" +
+		   //  "gl_FragColor.a = gl_FragColor.a + alpha;" +
 		"}" +
 	"}";
 
