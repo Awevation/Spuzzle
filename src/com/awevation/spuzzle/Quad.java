@@ -229,7 +229,7 @@ public class Quad {
 
     public void draw(float[] mvMatrix, float[] pMatrix) {
 	Matrix.setIdentityM(mMatrix, 0);
-	//Matrix.setIdentityM(mvMatrix, 0);
+	Matrix.setIdentityM(mvMatrix, 0);
 
 	Matrix.translateM(mMatrix, 0, xPos, yPos, 0.f);
 	Matrix.multiplyMM(mvMatrix, 0, mvMatrix, 0, mMatrix, 0);

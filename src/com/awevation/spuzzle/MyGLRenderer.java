@@ -81,11 +81,11 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     public void onSurfaceChanged(GL10 unused, int width, int height) {
         GLES20.glViewport(0, 0, width, height);
 
-	float ratio = (float) width / height;
+	//float ratio = (float) width / height;
 
 	//Matrix.frustumM(mProjMatrix, 0, -ratio, ratio, -1, 1, 1, 4);
 	
-	Matrix.orthoM(mProjMatrix, 0, 0, width / 2, 0, height / 2, -1.f, 1.f);
+	Matrix.orthoM(mProjMatrix, 0, 0, width, 0, height, -1.f, 1.f);
     }
 
     public static int loadShader(int type, String shaderCode){

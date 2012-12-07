@@ -1,6 +1,8 @@
 #!/bin/bash
 
-if [ "$1" == "linux" ]; then
+OS=`uname`
+
+if [ "$OS" == "Linux" ]; then
     echo "Building..."; 
     ant debug;
     echo ""; 

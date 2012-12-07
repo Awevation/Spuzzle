@@ -38,9 +38,9 @@ public class OpenGLActivity extends MultiTouchActivity {
 
 	//set up the controller, then rock and roll
 	buttonLeft = (ControllerButton) findViewById(R.id.Left);
-	buttonRight = (ControllerButton) findViewById(R.id.Right);
 	buttonDown = (ControllerButton) findViewById(R.id.Down);
 	buttonUp = (ControllerButton) findViewById(R.id.Up);
+	buttonRight = (ControllerButton) findViewById(R.id.Right);
 
 	buttonLeft.setOnTouchListener(this);
 	buttonRight.setOnTouchListener(this);

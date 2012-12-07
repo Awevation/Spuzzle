@@ -31,7 +31,7 @@ public class Background extends Quad {
 
     @Override
     public void update(float dt) {
-	scale = 320f;
+	scale = 520f;
 	super.update(dt);
     }
 }
